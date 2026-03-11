@@ -22,7 +22,7 @@ export interface ApiRequestOptions {
   headers?: Record<string, string>;
 }
 
-const httpGet = async (endpoint: string, options: ApiRequestOptions) => {
+const httpGet = async (endpoint: string, options?: ApiRequestOptions) => {
   try {
     const response = await axiosInstance().get(endpoint, {
       params: options?.params,
@@ -35,7 +35,7 @@ const httpGet = async (endpoint: string, options: ApiRequestOptions) => {
   }
 };
 
-const httpPost = async (endpoint: string, options: ApiRequestOptions) => {
+const httpPost = async (endpoint: string, options?: ApiRequestOptions) => {
   try {
     const response = await axiosInstance().post(endpoint, {
       params: options?.params,
@@ -48,7 +48,7 @@ const httpPost = async (endpoint: string, options: ApiRequestOptions) => {
   }
 };
 
-const httpPut = async (endpoint: string, options: ApiRequestOptions) => {
+const httpPut = async (endpoint: string, options?: ApiRequestOptions) => {
   try {
     const response = await axiosInstance().put(endpoint, {
       params: options?.params,
@@ -61,7 +61,7 @@ const httpPut = async (endpoint: string, options: ApiRequestOptions) => {
   }
 };
 
-const httpPatch = async (endpoint: string, options: ApiRequestOptions) => {
+const httpPatch = async (endpoint: string, options?: ApiRequestOptions) => {
   try {
     const response = await axiosInstance().patch(endpoint, {
       params: options?.params,
@@ -73,7 +73,7 @@ const httpPatch = async (endpoint: string, options: ApiRequestOptions) => {
     throw error;
   }
 };
-const httpDelete = async (endpoint: string, options: ApiRequestOptions) => {
+const httpDelete = async (endpoint: string, options?: ApiRequestOptions) => {
   try {
     const response = await axiosInstance().delete(endpoint, {
       params: options?.params,
