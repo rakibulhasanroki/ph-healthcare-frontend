@@ -11,7 +11,7 @@ const DoctorList = () => {
 
   return (
     <div>
-      {data?.data.map((doctor: any) => (
+      {(data as any).data.map((doctor: any) => (
         <div key={doctor.id}>{doctor.name}</div>
       ))}
     </div>
