@@ -24,7 +24,15 @@ const getTokenSecondRemainTime = (token: string) => {
   }
 };
 
-export const setTokenCookies = async (name: string, token: string) => {
+export const setTokenCookies = async (
+  name: string,
+  token: string,
+  fallbackMaxAgeInSeconds?: number,
+) => {
   const maxAgeInSeconds = getTokenSecondRemainTime(token);
-  await setCookie(name, token, maxAgeInSeconds);
+  await setCookie(
+    name,
+    token,
+    maxAgeInSeconds || fallbackMaxAgeInSeconds || 24 * 60 * 60,
+  );
 };

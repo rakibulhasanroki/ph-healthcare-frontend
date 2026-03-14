@@ -34,9 +34,23 @@ export const loginAction = async (
 
     redirect("/dashboard");
   } catch (error: any) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "digest" in error &&
+      typeof error.digest === "string" &&
+      error.digest.startsWith("NEXT_REDIRECT")
+    ) {
+      throw error;
+    }
     return {
       success: false,
-      message: `Login failed: ${error.message}`,
+      message: `Login failed: ${error.response.data.message}`,
     };
   }
+};
+
+export const googleLoginAction = async () => {
+  const googleAuthUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login/google`;
+  redirect(googleAuthUrl);
 };

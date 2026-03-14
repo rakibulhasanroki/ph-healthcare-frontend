@@ -1,6 +1,9 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { loginAction } from "@/app/(commonLayout)/(auth)/login/_action";
+import {
+  googleLoginAction,
+  loginAction,
+} from "@/app/(commonLayout)/(auth)/login/_action";
 import AppField from "@/components/shared/form/AppField";
 import AppSubmitButton from "@/components/shared/form/AppSubmitButton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -19,13 +22,22 @@ import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { FcGoogle } from "react-icons/fc";
 
 const LoginForm = () => {
   const { mutateAsync } = useMutation({
     mutationFn: (payload: LoginPayload) => loginAction(payload),
   });
+
+  const { mutateAsync: googleLogin, isPending: googlePending } = useMutation({
+    mutationFn: async () => {
+      await googleLoginAction();
+    },
+  });
+
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -45,15 +57,19 @@ const LoginForm = () => {
       }
     },
   });
+
   return (
-    <Card className="w-full max-w-md mx-auto shadow-md">
-      <CardHeader>
-        <CardTitle className="text-center text-2xl">Welcome Back!</CardTitle>
-        <CardDescription className="text-center">
+    <Card className="w-full max-w-md mx-auto border shadow-sm rounded-2xl">
+      <CardHeader className="space-y-1 pb-2">
+        <CardTitle className="text-center text-2xl font-semibold tracking-tight">
+          Welcome Back!
+        </CardTitle>
+        <CardDescription className="text-center text-sm text-muted-foreground">
           Sign in with your email and password
         </CardDescription>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="space-y-6 pt-4">
         <form
           method="POST"
           action="#"
@@ -63,9 +79,9 @@ const LoginForm = () => {
             e.stopPropagation();
             form.handleSubmit();
           }}
-          className="space-y-4"
+          className="space-y-5"
         >
-          {/* Email Field */}
+          {/* Email */}
           <form.Field
             name="email"
             validators={{ onChange: loginSchema.shape.email }}
@@ -80,7 +96,7 @@ const LoginForm = () => {
             )}
           </form.Field>
 
-          {/* Password Field */}
+          {/* Password */}
           <form.Field
             name="password"
             validators={{ onChange: loginSchema.shape.password }}
@@ -100,15 +116,9 @@ const LoginForm = () => {
                     onClick={() => setShowPassword((p) => !p)}
                   >
                     {showPassword ? (
-                      <EyeOff
-                        className="size-4 cursor-pointer"
-                        aria-hidden="true"
-                      />
+                      <EyeOff className="size-4" />
                     ) : (
-                      <Eye
-                        className="size-4 cursor-pointer"
-                        aria-hidden="true"
-                      />
+                      <Eye className="size-4" />
                     )}
                   </Button>
                 }
@@ -116,30 +126,68 @@ const LoginForm = () => {
             )}
           </form.Field>
 
-          {/* forgot password */}
+          {/* Forgot */}
           <div className="text-right">
             <Link
               href="/forgot-password"
-              className="text-xs/relaxed text-muted-foreground hover:text-foreground"
+              className="text-xs text-muted-foreground hover:text-primary transition-colors"
             >
               Forgot Password?
             </Link>
           </div>
+
           {serverError && (
             <Alert variant="destructive">
               <AlertDescription>{serverError}</AlertDescription>
             </Alert>
           )}
+
           <form.Subscribe
             selector={(s) => [s.canSubmit, s.isSubmitting] as const}
           >
             {([canSubmit, isSubmitting]) => (
-              <AppSubmitButton isPending={isSubmitting} disabled={!canSubmit}>
+              <AppSubmitButton
+                isPending={isSubmitting}
+                disabled={!canSubmit}
+                className="cursor-pointer"
+              >
                 Login
               </AppSubmitButton>
             )}
           </form.Subscribe>
         </form>
+
+        {/* Divider */}
+        <div className="relative flex items-center">
+          <span className="grow border-t" />
+          <span className="mx-3 text-xs uppercase text-muted-foreground">
+            Or continue with
+          </span>
+          <span className="grow border-t" />
+        </div>
+
+        {/* Google */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full h-10 gap-2 font-medium"
+          disabled={googlePending}
+          onClick={() => googleLogin()}
+        >
+          <FcGoogle className="size-4" />
+          {googlePending ? "Redirecting..." : "Login with Google"}
+        </Button>
+
+        {/* Signup  */}
+        <div className="text-center text-sm text-muted-foreground">
+          Don’t have an account?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-primary hover:underline underline-offset-4"
+          >
+            Sign up
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
