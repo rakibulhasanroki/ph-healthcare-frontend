@@ -1,25 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use server";
-
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { setCookie } from "./cookieUtils";
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN;
 const getTokenSecondRemainTime = (token: string) => {
   if (!token) return 0;
-  try {
-    const tokenPayload = JWT_ACCESS_SECRET
-      ? (jwt.verify(token, JWT_ACCESS_SECRET) as JwtPayload)
-      : (jwt.decode(token) as JwtPayload);
-    if (tokenPayload && !tokenPayload.exp) {
-      return 0;
-    }
 
-    const remainingSeconds =
-      (tokenPayload.exp as number) - Math.floor(Date.now() / 1000);
-    return remainingSeconds > 0 ? remainingSeconds : 0;
-  } catch (error: any) {
-    console.log("Error decoding token", error);
+  try {
+    const payload = jwt.decode(token) as JwtPayload | null;
+
+    if (!payload?.exp) return 0;
+
+    const remaining = payload.exp - Math.floor(Date.now() / 1000);
+
+    return remaining > 0 ? remaining : 0;
+  } catch (err) {
+    console.error("Token decode error", err);
     return 0;
   }
 };
@@ -35,4 +29,17 @@ export const setTokenCookies = async (
     token,
     maxAgeInSeconds || fallbackMaxAgeInSeconds || 24 * 60 * 60,
   );
+};
+
+export const isTokenExpiredSoon = async (
+  token: string,
+  threshold = 300,
+): Promise<boolean> => {
+  const remaining = getTokenSecondRemainTime(token);
+  return remaining > 0 && remaining <= threshold;
+};
+
+export const isTokenExpired = async (token: string): Promise<boolean> => {
+  const remaining = getTokenSecondRemainTime(token);
+  return remaining === 0;
 };

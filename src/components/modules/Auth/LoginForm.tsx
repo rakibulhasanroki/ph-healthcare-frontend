@@ -23,10 +23,13 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+interface LoginFormProps {
+  redirectPath?: string;
+}
 
-const LoginForm = () => {
+const LoginForm = ({ redirectPath }: LoginFormProps) => {
   const { mutateAsync } = useMutation({
-    mutationFn: (payload: LoginPayload) => loginAction(payload),
+    mutationFn: (payload: LoginPayload) => loginAction(payload, redirectPath),
     retry: false,
   });
 
