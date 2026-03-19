@@ -42,11 +42,15 @@ export async function getNewTokenWithRefreshToken(refreshToken: string) {
 
 export async function getUserInfo() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+  const accessToken = cookieStore.get("accessToken")?.value;
+  const token = cookieStore.get("better-auth.session_token")?.value;
+  if (!token) {
+    return null;
+  }
   const response = await fetch(`${BASE_URL}/auth/me`, {
     headers: {
       "Content-Type": "application/json",
-      Cookie: `accessToken=${token}`,
+      Cookie: `accessToken=${accessToken}; better-auth.session_token=${token}`,
     },
   });
   if (!response.ok) {

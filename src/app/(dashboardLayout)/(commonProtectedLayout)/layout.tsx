@@ -3,11 +3,5 @@ export default function CommonProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <>
-      <br />
-      CommonProtectedLayout
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }

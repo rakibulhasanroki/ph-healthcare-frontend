@@ -3,10 +3,5 @@ export default function CommonLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div className="max-w-11/12 m-auto">
-      CommonLayout
-      {children}
-    </div>
-  );
+  return <div className="max-w-11/12 m-auto pt-8">{children}</div>;
 }
